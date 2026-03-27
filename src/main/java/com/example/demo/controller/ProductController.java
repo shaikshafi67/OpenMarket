@@ -1,3 +1,10 @@
+// Show Home Page with only APPROVED products
+    @GetMapping("/")
+    public String viewHomePage(Model model) {
+        // We will need to add findByStatus("APPROVED") to our Service later
+        model.addAttribute("products", service.getApprovedProducts()); 
+        return "index";
+    }
 package com.example.demo.controller;
 
 import com.example.demo.model.Product;
