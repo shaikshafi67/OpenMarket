@@ -32,7 +32,7 @@ jobs:
       - name: Push to Hugging Face Spaces
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          HF_USERNAME: shaikshafi67
+          HF_USERNAME: shafi16
           HF_SPACE: OpenMarket
         run: |
           git config --global user.email "github-actions@openmarket.com"
