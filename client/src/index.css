@@ -1,0 +1,555 @@
+* { box-sizing: border-box; }
+
+:root {
+  --primary:       #002f34;
+  --primary-light: #004a52;
+  --accent:        #ffce32;
+  --accent-2:      #ff6b2b;
+  --bg:            #f2f4f5;
+  --white:         #fff;
+  --shadow-sm:     0 1px 4px rgba(0,47,52,0.08);
+  --shadow-md:     0 4px 20px rgba(0,47,52,0.14);
+  --shadow-lg:     0 12px 40px rgba(0,47,52,0.22);
+  --radius:        12px;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg);
+}
+
+button { font-family: inherit; }
+
+/* ── Premium Scrollbar ── */
+::-webkit-scrollbar { height: 5px; width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #002f34, #ffce32);
+  border-radius: 4px;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* ══════════════════════════════════════════
+   KEYFRAME ANIMATIONS
+══════════════════════════════════════════ */
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes imgFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes floatBob {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33%       { transform: translateY(-14px) rotate(3deg); }
+  66%       { transform: translateY(-8px) rotate(-2deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.12); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(255,206,50,0.35); }
+  50%       { box-shadow: 0 0 28px rgba(255,206,50,0.8), 0 0 50px rgba(255,206,50,0.25); }
+}
+
+@keyframes bellRing {
+  0%, 100% { transform: rotate(0deg); }
+  8%        { transform: rotate(16deg); }
+  18%       { transform: rotate(-13deg); }
+  28%       { transform: rotate(10deg); }
+  38%       { transform: rotate(-8deg); }
+  48%       { transform: rotate(5deg); }
+  58%       { transform: rotate(-3deg); }
+  70%       { transform: rotate(1deg); }
+}
+
+@keyframes heartBeat {
+  0%   { transform: scale(1); }
+  15%  { transform: scale(1.4); }
+  30%  { transform: scale(1); }
+  45%  { transform: scale(1.25); }
+  60%  { transform: scale(1); }
+}
+
+@keyframes slideInModal {
+  from { opacity: 0; transform: translateY(-24px) scale(0.94); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes dropdownSlide {
+  from { opacity: 0; transform: translateY(-10px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+@keyframes shimmerBtn {
+  0%   { transform: translateX(-120%) skewX(-20deg); }
+  100% { transform: translateX(250%)  skewX(-20deg); }
+}
+
+@keyframes rippleEffect {
+  to { transform: scale(4); opacity: 0; }
+}
+
+@keyframes countIn {
+  from { transform: translateY(6px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+
+@keyframes borderPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,206,50,0.5); }
+  50%       { box-shadow: 0 0 0 6px rgba(255,206,50,0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes priceGlow {
+  0%, 100% { text-shadow: none; }
+  50%       { text-shadow: 0 0 20px rgba(0,47,52,0.3); }
+}
+
+@keyframes badgePop {
+  0%   { transform: scale(0); }
+  60%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* ══════════════════════════════════════════
+   PRODUCT CARDS
+══════════════════════════════════════════ */
+
+.product-card {
+  animation: fadeInUp 0.45s cubic-bezier(0.4, 0, 0.2, 1) both;
+  will-change: transform;
+}
+
+.product-card:nth-child(1)  { animation-delay: 0.04s; }
+.product-card:nth-child(2)  { animation-delay: 0.09s; }
+.product-card:nth-child(3)  { animation-delay: 0.14s; }
+.product-card:nth-child(4)  { animation-delay: 0.19s; }
+.product-card:nth-child(5)  { animation-delay: 0.24s; }
+.product-card:nth-child(6)  { animation-delay: 0.29s; }
+.product-card:nth-child(7)  { animation-delay: 0.34s; }
+.product-card:nth-child(8)  { animation-delay: 0.39s; }
+.product-card:nth-child(9)  { animation-delay: 0.44s; }
+.product-card:nth-child(10) { animation-delay: 0.49s; }
+.product-card:nth-child(11) { animation-delay: 0.54s; }
+.product-card:nth-child(12) { animation-delay: 0.59s; }
+
+.product-card .card-img {
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease;
+  will-change: transform;
+}
+
+.product-card:hover .card-img { transform: scale(1.1); }
+.product-card .img-wrap        { overflow: hidden; }
+
+.img-loaded    { animation: imgFadeIn 0.4s ease; }
+
+.img-skeleton {
+  background: linear-gradient(90deg, #eef0f2 25%, #e0e4e8 50%, #eef0f2 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+/* ══════════════════════════════════════════
+   NAVBAR
+══════════════════════════════════════════ */
+
+.navbar-anim { animation: fadeInDown 0.5s cubic-bezier(0.4, 0, 0.2, 1) both; }
+
+.logo-hover {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+}
+.logo-hover:hover { transform: scale(1.06); }
+
+/* Animated gradient bottom border on header */
+.header-premium {
+  position: relative;
+}
+.header-premium::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #002f34, #ffce32, #002f34, #ffce32);
+  background-size: 300% 100%;
+  animation: gradientShift 5s ease infinite;
+}
+
+/* Search bar glow on focus */
+.search-focus {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.search-focus:focus-within {
+  border-color: #ffce32 !important;
+  box-shadow: 0 0 0 3px rgba(255,206,50,0.28), 0 4px 16px rgba(0,47,52,0.1) !important;
+  transform: scaleX(1.012);
+}
+
+/* Nav icon hover lift */
+.nav-icon-hover {
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 8px;
+}
+.nav-icon-hover:hover {
+  background-color: rgba(0,47,52,0.07);
+  transform: translateY(-2px);
+}
+
+/* Avatar hover */
+.avatar-glow { transition: all 0.3s ease; }
+.avatar-glow:hover { box-shadow: 0 0 0 3px rgba(255,206,50,0.55) !important; }
+
+/* ── SELL Button ── */
+.sell-btn-glow {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.sell-btn-glow:hover {
+  background: linear-gradient(135deg, #ffce32, #ffd94d) !important;
+  box-shadow: 0 0 22px rgba(255,206,50,0.55), 0 6px 18px rgba(0,0,0,0.15) !important;
+  transform: translateY(-2px) scale(1.04) !important;
+}
+.sell-btn-glow::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transform: skewX(-20deg);
+}
+.sell-btn-glow:hover::after { animation: shimmerBtn 0.65s ease forwards; }
+
+/* Login / Register buttons */
+.login-btn-anim {
+  transition: all 0.25s ease;
+}
+.login-btn-anim:hover {
+  background-color: rgba(0,47,52,0.07) !important;
+  transform: translateY(-1px);
+}
+
+.register-btn-anim {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.register-btn-anim:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(0,47,52,0.35) !important;
+}
+.register-btn-anim::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  transform: skewX(-20deg);
+}
+.register-btn-anim:hover::after { animation: shimmerBtn 0.6s ease forwards; }
+
+/* ── Dropdown ── */
+.dropdown-anim {
+  animation: dropdownSlide 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: top right;
+}
+
+.dd-item-hover {
+  transition: background-color 0.18s ease, padding-left 0.18s ease;
+}
+.dd-item-hover:hover {
+  background-color: rgba(0,47,52,0.06) !important;
+  padding-left: 28px !important;
+}
+
+/* ── Notification badge ── */
+.badge-pop { animation: badgePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+/* Bell ring on new notif */
+.bell-ring {
+  animation: bellRing 1.8s ease-in-out;
+  transform-origin: 50% 0%;
+  display: inline-block;
+}
+
+/* ══════════════════════════════════════════
+   AUTH MODAL
+══════════════════════════════════════════ */
+
+.modal-overlay-anim { animation: overlayFadeIn 0.25s ease; }
+.modal-anim         { animation: slideInModal 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* ══════════════════════════════════════════
+   HERO BANNER
+══════════════════════════════════════════ */
+
+.hero-gradient {
+  background: linear-gradient(270deg, #001e22, #002f34, #004a52, #003a42, #002f34);
+  background-size: 400% 400%;
+  animation: gradientShift 9s ease infinite;
+}
+
+.hero-anim { animation: fadeInUp 0.65s cubic-bezier(0.4, 0, 0.2, 1) both; }
+
+.float-anim {
+  animation: floatBob 3.5s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* ══════════════════════════════════════════
+   CATEGORY CARDS
+══════════════════════════════════════════ */
+
+.category-card {
+  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeInScale 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  cursor: pointer;
+}
+
+.category-card:nth-child(1)  { animation-delay: 0.03s; }
+.category-card:nth-child(2)  { animation-delay: 0.07s; }
+.category-card:nth-child(3)  { animation-delay: 0.11s; }
+.category-card:nth-child(4)  { animation-delay: 0.15s; }
+.category-card:nth-child(5)  { animation-delay: 0.19s; }
+.category-card:nth-child(6)  { animation-delay: 0.23s; }
+.category-card:nth-child(7)  { animation-delay: 0.27s; }
+.category-card:nth-child(8)  { animation-delay: 0.31s; }
+.category-card:nth-child(9)  { animation-delay: 0.35s; }
+.category-card:nth-child(10) { animation-delay: 0.39s; }
+.category-card:nth-child(11) { animation-delay: 0.43s; }
+.category-card:nth-child(12) { animation-delay: 0.47s; }
+
+.category-card:hover {
+  transform: translateY(-8px) scale(1.04);
+  box-shadow: 0 16px 36px rgba(0,47,52,0.2) !important;
+}
+
+.cat-emoji {
+  display: block;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.category-card:hover .cat-emoji { transform: scale(1.2) translateY(-4px); }
+
+/* ══════════════════════════════════════════
+   FILTER BAR
+══════════════════════════════════════════ */
+
+.filter-btn-anim {
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+.filter-btn-anim:hover {
+  background-color: rgba(0,47,52,0.08) !important;
+  transform: translateY(-1px);
+}
+.filter-btn-anim.active-filter::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%; right: 50%;
+  height: 2px;
+  background: #ffce32;
+  transition: left 0.3s ease, right 0.3s ease;
+  border-radius: 2px;
+}
+
+/* ══════════════════════════════════════════
+   PRODUCT PAGE
+══════════════════════════════════════════ */
+
+.page-enter  { animation: fadeInUp 0.55s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.slide-left  { animation: slideInLeft  0.5s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.slide-right { animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both; }
+
+.thumb-img {
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+.thumb-img:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0,47,52,0.2);
+  border-color: #ffce32 !important;
+}
+
+.chat-btn-premium {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.chat-btn-premium:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 10px 28px rgba(0,47,52,0.4) !important;
+  background: linear-gradient(135deg, #002f34, #004a52) !important;
+}
+.chat-btn-premium::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: skewX(-20deg);
+}
+.chat-btn-premium:hover::after { animation: shimmerBtn 0.65s ease forwards; }
+
+.price-anim {
+  animation: fadeInLeft 0.45s cubic-bezier(0.4, 0, 0.2, 1) 0.15s both;
+}
+
+/* ══════════════════════════════════════════
+   LIST CARDS
+══════════════════════════════════════════ */
+
+.list-card-anim {
+  animation: fadeInLeft 0.38s cubic-bezier(0.4, 0, 0.2, 1) both;
+  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.list-card-anim:nth-child(1)  { animation-delay: 0.05s; }
+.list-card-anim:nth-child(2)  { animation-delay: 0.10s; }
+.list-card-anim:nth-child(3)  { animation-delay: 0.15s; }
+.list-card-anim:nth-child(4)  { animation-delay: 0.20s; }
+.list-card-anim:nth-child(5)  { animation-delay: 0.25s; }
+.list-card-anim:nth-child(6)  { animation-delay: 0.30s; }
+
+.list-card-anim:hover { transform: translateX(6px) !important; }
+
+/* ══════════════════════════════════════════
+   PREMIUM INPUTS & BUTTONS
+══════════════════════════════════════════ */
+
+.premium-input {
+  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  outline: none !important;
+}
+.premium-input:focus {
+  border-color: #002f34 !important;
+  box-shadow: 0 0 0 3px rgba(0,47,52,0.14), 0 2px 8px rgba(0,47,52,0.08) !important;
+  transform: translateY(-1px);
+}
+
+.premium-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.premium-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.22) !important;
+}
+.premium-btn:active { transform: translateY(0) scale(0.98) !important; }
+.premium-btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  transform: skewX(-20deg);
+}
+.premium-btn:hover::after { animation: shimmerBtn 0.6s ease forwards; }
+
+/* ══════════════════════════════════════════
+   SECTION HEADING UNDERLINE ANIMATION
+══════════════════════════════════════════ */
+
+.section-heading {
+  position: relative;
+  display: inline-block;
+}
+.section-heading::after {
+  content: '';
+  position: absolute;
+  bottom: -5px; left: 0;
+  width: 0; height: 3px;
+  background: linear-gradient(90deg, #002f34, #ffce32);
+  border-radius: 2px;
+  transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.section-heading:hover::after { width: 100%; }
+
+/* ══════════════════════════════════════════
+   HEART / WISHLIST
+══════════════════════════════════════════ */
+
+.heart-btn-anim {
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+.heart-btn-anim:hover { transform: scale(1.18) !important; }
+.heart-beat            { animation: heartBeat 0.55s ease; }
+
+/* ══════════════════════════════════════════
+   EMPTY STATE
+══════════════════════════════════════════ */
+
+.empty-anim {
+  animation: fadeInScale 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
