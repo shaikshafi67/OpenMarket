@@ -1,0 +1,51 @@
+name: Deploy to Hugging Face Spaces
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install & Build React client
+        working-directory: ./client
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install server dependencies
+        working-directory: ./server
+        run: npm ci --production
+
+      - name: Push to Hugging Face Spaces
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_USERNAME: shaikshafi67
+          HF_SPACE: OpenMarket
+        run: |
+          git config --global user.email "github-actions@openmarket.com"
+          git config --global user.name "OpenMarket CI"
+
+          git clone https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$HF_SPACE hf_space
+
+          # Copy everything except node_modules and .git
+          rsync -a --exclude='.git' --exclude='node_modules' --exclude='client/node_modules' \
+            --exclude='server/uploads' --exclude='.gitignore' \
+            ./ hf_space/
+
+          cd hf_space
+          git add -A
+          git diff --staged --quiet || git commit -m "Deploy: $(date +'%Y-%m-%d %H:%M:%S')"
+          git push
