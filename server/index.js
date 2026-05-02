@@ -10,13 +10,13 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'openmarket39@gmail.com',   // ← replace with your Gmail
-        pass: 'nogjqjjrghpobird',      // ← replace with Gmail App Password (not your login password)
+        user: 'openmarket39@gmail.com',
+        pass: 'ebnnavlafojalhhx',
     }
 });
 
 function sendEmail(to, subject, html) {
-    transporter.sendMail({ from: '"OpenMarket Team" <openmarketteam@gmail.com>', to, subject, html }, (err) => {
+    transporter.sendMail({ from: '"OpenMarket Team" <openmarket39@gmail.com>', to, subject, html }, (err) => {
         if (err) console.error('Email error:', err.message);
         else console.log('Email sent to', to);
     });
