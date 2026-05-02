@@ -6,24 +6,24 @@ function Notifications({ user }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/api/notifications/${user.id}`)
+        axios.get(`/api/notifications/${user.id}`)
             .then(res => {
                 setNotifications(res.data);
-                axios.put(`http://localhost:5000/api/notifications/read/${user.id}`).catch(() => {});
+                axios.put(`/api/notifications/read/${user.id}`).catch(() => {});
             })
             .catch(() => {})
             .finally(() => setLoading(false));
     }, [user.id]);
 
     const deleteNotification = (id) => {
-        axios.delete(`http://localhost:5000/api/notifications/${id}`)
+        axios.delete(`/api/notifications/${id}`)
             .then(() => setNotifications(prev => prev.filter(n => n.id !== id)))
             .catch(() => {});
     };
 
     const deleteAll = () => {
         if (!window.confirm('Delete all notifications?')) return;
-        Promise.all(notifications.map(n => axios.delete(`http://localhost:5000/api/notifications/${n.id}`)))
+        Promise.all(notifications.map(n => axios.delete(`/api/notifications/${n.id}`)))
             .then(() => setNotifications([]))
             .catch(() => {});
     };

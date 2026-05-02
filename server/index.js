@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'openmarket39@gmail.com',   // ← replace with your Gmail
-        pass: 'nogj qjjr ghpo bird',      // ← replace with Gmail App Password (not your login password)
+        pass: 'nogjqjjrghpobird',      // ← replace with Gmail App Password (not your login password)
     }
 });
 
@@ -35,10 +35,10 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const db = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'open_market',
+    host:            process.env.DB_HOST     || 'localhost',
+    user:            process.env.DB_USER     || 'root',
+    password:        process.env.DB_PASSWORD || '',
+    database:        process.env.DB_NAME     || 'open_market',
     connectionLimit: 10,
 });
 

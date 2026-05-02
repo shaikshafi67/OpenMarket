@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 
-const API = 'http://localhost:5000';
+const API = '';
 
 export default function Signup({ onSignupSuccess }) {
   const [step,     setStep]     = useState(1); // 1=form, 2=otp

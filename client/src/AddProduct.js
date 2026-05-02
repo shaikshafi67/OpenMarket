@@ -31,7 +31,7 @@ function AddProduct({ sellerId, onProductAdded }) {
         if (video) formData.append('video', video);
 
         try {
-            const res = await axios.post('http://localhost:5000/api/products/add', formData, {
+            const res = await axios.post('/api/products/add', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             alert(res.data.message);

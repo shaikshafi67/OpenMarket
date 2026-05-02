@@ -26,7 +26,7 @@ export default function Footer({ onLinkClick }) {
   const { language, changeLanguage, t } = useLang();
 
   const load = () =>
-    axios.get('http://localhost:5000/api/footer')
+    axios.get('/api/footer')
       .then(r => setConfig(r.data))
       .catch(() => {});
 

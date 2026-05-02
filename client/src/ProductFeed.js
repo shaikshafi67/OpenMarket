@@ -45,7 +45,7 @@ function ProductFeed({ onProductClick, searchQuery, wishlist = {}, onToggleWishl
   const applyViewMode = (m) => { setViewMode(m); sessionStorage.setItem('om_viewMode', m); };
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/products/approved')
+    axios.get('/api/products/approved')
       .then(res => setProducts(res.data))
       .catch(err => console.error('Error fetching products:', err));
   }, []);
@@ -215,7 +215,7 @@ function ProductFeed({ onProductClick, searchQuery, wishlist = {}, onToggleWishl
                 onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,47,52,0.08)'; }}
               >
                 <div style={listImgWrap}>
-                  <img src={`http://localhost:5000${getFirstImage(p.image_url)}`} style={listImg} alt={p.title} />
+                  <img src={`${getFirstImage(p.image_url)}`} style={listImg} alt={p.title} />
                   {p.is_featured && <div style={eliteBadge}>ELITE</div>}
                 </div>
                 <div style={listInfo}>
@@ -315,7 +315,7 @@ function AllCategoriesPanel({ products, getFirstImage, onCategorySelect, onProdu
                       >
                         <div style={panelThumb}>
                           <img
-                            src={`http://localhost:5000${getFirstImage(p.image_url)}`}
+                            src={`${getFirstImage(p.image_url)}`}
                             style={panelThumbImg}
                             alt=""
                           />
@@ -399,7 +399,7 @@ function ProductCard({ p, viewMode, getFirstImage, onProductClick, wishlist, tog
         {!loaded && <div className="img-skeleton" style={{ position: 'absolute', inset: 0 }} />}
         <img
           className={`card-img${loaded ? ' img-loaded' : ''}`}
-          src={`http://localhost:5000${getFirstImage(p.image_url)}`}
+          src={`${getFirstImage(p.image_url)}`}
           alt={p.title}
           onLoad={() => setLoaded(true)}
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', backgroundColor: '#fff', opacity: loaded ? 1 : 0 }}

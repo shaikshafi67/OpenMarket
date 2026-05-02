@@ -44,7 +44,7 @@ function MyChats({ user }) {
   const chatKey = (c) => `${c.id}-${c.buyer_id}`;
 
   const fetchChats = () => {
-    axios.get(`http://localhost:5000/api/chats/summary/${user.id}`)
+    axios.get(`/api/chats/summary/${user.id}`)
       .then(res => setChats(res.data))
       .catch(() => {});
   };
@@ -66,7 +66,7 @@ function MyChats({ user }) {
   const handleDeleteChat = (chat) => {
     setOpenMenu(null);
     if (!window.confirm(`Delete chat with ${chat.other_user_name}?`)) return;
-    axios.delete('http://localhost:5000/api/messages/delete-chat', {
+    axios.delete('/api/messages/delete-chat', {
       data: { product_id: chat.id, user1_id: user.id, user2_id: chat.buyer_id }
     }).then(() => {
       if (activeChat && chatKey(activeChat) === chatKey(chat)) setActiveChat(null);
@@ -169,7 +169,7 @@ function MyChats({ user }) {
               >
                 {/* Avatar: product thumbnail + user initial badge */}
                 <div style={avatarWrap}>
-                  <img src={`http://localhost:5000${getImg(chat.image_url)}`} alt="" style={productThumb} />
+                  <img src={`${getImg(chat.image_url)}`} alt="" style={productThumb} />
                   <div style={userInitial}>{(chat.other_user_name || 'U').charAt(0).toUpperCase()}</div>
                 </div>
 

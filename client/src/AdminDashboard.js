@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import FooterAdmin from './FooterAdmin';
 
-const API = 'http://localhost:5000/api/admin';
+const API = '/api/admin';
 
 const CATEGORIES = [
   'Cars','Bikes','Properties','Electronics & Appliances','Mobiles',
@@ -302,7 +302,7 @@ export default function AdminDashboard({ user, onLogout }) {
       {viewAd && (
         <Modal onClose={() => setViewAd(null)} title="Ad Details">
           <div style={viewGrid}>
-            <img src={`http://localhost:5000${getImg(viewAd.image_url)}`} style={viewImg} alt="" />
+            <img src={`${getImg(viewAd.image_url)}`} style={viewImg} alt="" />
             <div style={viewInfo}>
               <h3 style={viewTitle}>{viewAd.title}</h3>
               <div style={viewRow}><span style={viewLabel}>Seller</span><span>{viewAd.seller_name || '—'}</span></div>
@@ -448,7 +448,7 @@ function AdsTable({ rows, onApprove, onDelete, onEdit, onView, showApprove, show
         {rows.map((item, i) => (
           <tr key={item.id} style={i%2===0?trEven:trOdd}>
             <td style={td}>
-              <img src={`http://localhost:5000${getImg(item.image_url)}`} style={adThumb} alt=""
+              <img src={`${getImg(item.image_url)}`} style={adThumb} alt=""
                 onClick={() => onView(item)} title="View details"
               />
             </td>

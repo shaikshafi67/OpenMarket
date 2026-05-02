@@ -15,7 +15,7 @@ function MyAds({ user }) {
     const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), 4000); };
 
     const fetchAds = () => {
-        axios.get(`http://localhost:5000/api/products/user/${user.id}`)
+        axios.get(`/api/products/user/${user.id}`)
             .then(res => setMyProducts(res.data))
             .catch(err => console.log(err));
     };
@@ -24,7 +24,7 @@ function MyAds({ user }) {
 
     const deleteAd = (id) => {
         if (!window.confirm('Remove this ad permanently?')) return;
-        axios.delete(`http://localhost:5000/api/products/delete/${id}`)
+        axios.delete(`/api/products/delete/${id}`)
             .then(() => { setMyProducts(p => p.filter(x => x.id !== id)); showToast('Ad removed.'); })
             .catch(() => showToast('Failed to remove ad.'));
     };
@@ -81,7 +81,7 @@ function MyAds({ user }) {
         fd.append('keepImages',  JSON.stringify(keptImages));
         newFiles.forEach(f => fd.append('newImages', f, f.name));
 
-        axios.put(`http://localhost:5000/api/products/update/${editingAd.id}`, fd)
+        axios.put(`/api/products/update/${editingAd.id}`, fd)
         .then(res => {
             if (res.data && res.data.success) {
                 setMyProducts(prev => prev.map(p =>
@@ -116,7 +116,7 @@ function MyAds({ user }) {
                 <div style={adList}>
                     {myProducts.map(p => (
                         <div key={p.id} style={adCard}>
-                            <img src={`http://localhost:5000${getThumb(p.image_url)}`} alt="ad" style={thumb} />
+                            <img src={`${getThumb(p.image_url)}`} alt="ad" style={thumb} />
                             <div style={adInfo}>
                                 <div style={adTitle}>{p.title}</div>
                                 <div style={adPrice}>₹ {Number(p.price).toLocaleString('en-IN')}</div>
@@ -153,7 +153,7 @@ function MyAds({ user }) {
                                 {/* Existing images */}
                                 {keptImages.map((url, i) => (
                                     <div key={`kept-${i}`} style={imgSlot}>
-                                        <img src={`http://localhost:5000${url}`} alt="" style={slotImg} />
+                                        <img src={`${url}`} alt="" style={slotImg} />
                                         <button style={removeImgBtn} onClick={() => removeKeptImage(i)} title="Remove">✕</button>
                                     </div>
                                 ))}

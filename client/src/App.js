@@ -112,7 +112,7 @@ function AppInner() {
   useEffect(() => {
     if (!user) return;
     const check = () =>
-      axios.get(`http://localhost:5000/api/chats/summary/${user.id}`)
+      axios.get(`/api/chats/summary/${user.id}`)
         .then(r => setUnreadCount(r.data.filter(c => c.msg_count > 0).length)).catch(() => {});
     check();
     const t = setInterval(check, 5000);
@@ -124,7 +124,7 @@ function AppInner() {
     if (!user) return;
     let prevCount = 0;
     const fetchCount = () =>
-      axios.get(`http://localhost:5000/api/notifications/${user.id}`)
+      axios.get(`/api/notifications/${user.id}`)
         .then(r => {
           const count = r.data.filter(n => !n.is_read).length;
           if (count > prevCount) { setBellRing(true); setTimeout(() => setBellRing(false), 2000); }

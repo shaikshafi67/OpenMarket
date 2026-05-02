@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 
-const API = 'http://localhost:5000';
+const API = '';
 
 export default function Login({ onLoginSuccess }) {
   // 'login' | 'forgot-email' | 'forgot-otp' | 'forgot-reset' | 'forgot-done'

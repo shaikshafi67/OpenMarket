@@ -76,7 +76,7 @@ function SellerDashboard({ user, setView }) {
     images.filter(Boolean).forEach(img => formData.append('images', img));
 
     try {
-      await axios.post('http://localhost:5000/api/products/add', formData);
+      await axios.post('/api/products/add', formData);
       setView('market');
       alert('Ad posted! Waiting for admin approval.');
     } catch (err) {

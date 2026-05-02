@@ -32,7 +32,7 @@ export default function ChatWindow({ product, currentUser, onBack, showProductPa
     const fetchMessages = useCallback(() => {
         const otherId = getOtherId();
         if (!otherId || !product.id) return;
-        axios.get(`http://localhost:5000/api/messages/${product.id}/${currentUser.id}/${otherId}`)
+        axios.get(`/api/messages/${product.id}/${currentUser.id}/${otherId}`)
             .then(r => setChatHistory(r.data))
             .catch(console.error);
     }, [product.id, currentUser.id, getOtherId]);
@@ -48,7 +48,7 @@ export default function ChatWindow({ product, currentUser, onBack, showProductPa
         const otherId = getOtherId();
         if (!msg.trim() || !otherId || sending) return;
         setSending(true);
-        axios.post('http://localhost:5000/api/messages/send', {
+        axios.post('/api/messages/send', {
             product_id:  product.id,
             sender_id:   currentUser.id,
             receiver_id: otherId,
@@ -67,7 +67,7 @@ export default function ChatWindow({ product, currentUser, onBack, showProductPa
         fd.append('sender_id',   currentUser.id);
         fd.append('receiver_id', otherId);
         fd.append('message_type', type);
-        axios.post('http://localhost:5000/api/messages/upload', fd)
+        axios.post('/api/messages/upload', fd)
             .then(() => { setImgPreview(null); fetchMessages(); })
             .catch(() => alert('Upload failed'));
     };
@@ -140,7 +140,7 @@ export default function ChatWindow({ product, currentUser, onBack, showProductPa
                         <ArrowLeft /> Back
                     </button>
                     <div style={productCard}>
-                        <img src={`http://localhost:5000${getProductImg()}`} alt="" style={productImg} />
+                        <img src={`${getProductImg()}`} alt="" style={productImg} />
                         <div style={productInfo}>
                             <div style={productPrice}>₹ {Number(product.price).toLocaleString('en-IN')}</div>
                             <div style={productTitle}>{product.title}</div>
@@ -214,22 +214,22 @@ export default function ChatWindow({ product, currentUser, onBack, showProductPa
 
                                             {m.message_type === 'image' && (
                                                 <img
-                                                    src={`http://localhost:5000${m.file_url}`}
+                                                    src={`${m.file_url}`}
                                                     alt="img"
                                                     style={msgImgStyle}
-                                                    onClick={() => window.open(`http://localhost:5000${m.file_url}`, '_blank')}
+                                                    onClick={() => window.open(`${m.file_url}`, '_blank')}
                                                 />
                                             )}
                                             {m.message_type === 'audio' && (
                                                 <audio
-                                                    src={`http://localhost:5000${m.file_url}`}
+                                                    src={`${m.file_url}`}
                                                     controls
                                                     style={{ width:'200px', display:'block' }}
                                                 />
                                             )}
                                             {m.message_type === 'file' && (
                                                 <a
-                                                    href={`http://localhost:5000${m.file_url}`}
+                                                    href={`${m.file_url}`}
                                                     target="_blank"
                                                     rel="noreferrer"
                                                     style={fileLink}

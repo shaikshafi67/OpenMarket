@@ -34,7 +34,7 @@ export default function ViewCart({ items = [], onRemove, onProductClick = () => 
                 {/* Image */}
                 <div style={imgWrap}>
                   <img
-                    src={`http://localhost:5000${getFirstImage(item.image_url)}`}
+                    src={`${getFirstImage(item.image_url)}`}
                     alt={item.title}
                     style={img}
                   />

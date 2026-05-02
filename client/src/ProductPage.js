@@ -34,7 +34,7 @@ function ProductPage({ product, onBack, setView }) {
           >
             <img
               key={imgKey}
-              src={`http://localhost:5000${mainImg}`}
+              src={`${mainImg}`}
               style={{
                 ...largeDisplayImg,
                 transform: isZoomed ? 'scale(1.35)' : 'scale(1)',
@@ -54,7 +54,7 @@ function ProductPage({ product, onBack, setView }) {
                 style={url === mainImg ? activeThumbBox : thumbBox}
               >
                 <img
-                  src={`http://localhost:5000${url}`}
+                  src={`${url}`}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   alt={`thumb-${i}`}
                 />

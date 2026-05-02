@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
-const API = 'http://localhost:5000/api/footer';
+const API = '/api/footer';
 
 
 export default function FooterAdmin({ notify }) {
