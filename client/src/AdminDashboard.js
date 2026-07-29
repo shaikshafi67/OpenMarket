@@ -71,6 +71,10 @@ export default function AdminDashboard({ user, onLogout }) {
   const [editUser, setEditUser] = useState(null); // user object being edited
   const [viewAd,   setViewAd]   = useState(null); // product object being viewed
 
+  // Bulk selection (All Listings)
+  const [selectedIds,  setSelectedIds]  = useState(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+
   const notify = (msg) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
 
   const loadStats    = useCallback(() => axios.get(`${API}/stats`).then(r => setStats(r.data)).catch(()=>{}), []);
@@ -109,6 +113,36 @@ export default function AdminDashboard({ user, onLogout }) {
       loadPending(); loadListings(); loadStats();
       if (viewAd?.id === id) setViewAd(null);
     });
+  };
+
+  // ── BULK SELECTION (All Listings) ─────────────────────────────────
+  const toggleSelectOne = (id) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = (ids) => {
+    setSelectedIds(prev => {
+      const allSelected = ids.length > 0 && ids.every(id => prev.has(id));
+      return allSelected ? new Set() : new Set(ids);
+    });
+  };
+
+  const bulkDeleteSelected = () => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    if (!window.confirm(`Delete ${ids.length} selected listing${ids.length > 1 ? 's' : ''}? This cannot be undone.`)) return;
+    setBulkDeleting(true);
+    Promise.all(ids.map(id => axios.delete(`${API}/product/${id}`).catch(() => null)))
+      .then(() => {
+        notify(`✅ ${ids.length} listing${ids.length > 1 ? 's' : ''} deleted`);
+        setSelectedIds(new Set());
+        loadPending(); loadListings(); loadStats();
+      })
+      .finally(() => setBulkDeleting(false));
   };
 
   // ── USER ACTIONS ─────────────────────────────────────────────────
@@ -161,7 +195,7 @@ export default function AdminDashboard({ user, onLogout }) {
             <div
               key={item.key}
               style={{ ...navItem, ...(section === item.key ? navItemActive : {}) }}
-              onClick={() => { setSection(item.key); setSearch(''); }}
+              onClick={() => { setSection(item.key); setSearch(''); setSelectedIds(new Set()); }}
             >
               <span style={navIcon}>{NAV_ICONS[item.key]}</span>
               <span>{item.label}</span>
@@ -236,10 +270,32 @@ export default function AdminDashboard({ user, onLogout }) {
               <h2 style={pageTitle}>All Listings <Chip>{filteredListings.length}</Chip></h2>
               <input style={searchBox} placeholder="Search title, seller, category…" value={search} onChange={e => setSearch(e.target.value)} />
             </div>
+            {selectedIds.size > 0 && (
+              <div style={bulkBar}>
+                <span style={bulkBarText}>{selectedIds.size} selected</span>
+                <button style={dangerBtn} disabled={bulkDeleting} onClick={bulkDeleteSelected}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                  {bulkDeleting ? 'Deleting…' : 'Delete Selected'}
+                </button>
+                <button style={cancelBtn} onClick={() => setSelectedIds(new Set())}>Clear</button>
+              </div>
+            )}
             <div style={sectionCard}>
               {filteredListings.length === 0
                 ? <p style={emptyMsg}>No listings found.</p>
-                : <AdsTable rows={filteredListings} onApprove={approveAd} onDelete={deleteAd} onEdit={setEditAd} onView={setViewAd} showApprove showStatus />}
+                : <AdsTable
+                    rows={filteredListings}
+                    onApprove={approveAd}
+                    onDelete={deleteAd}
+                    onEdit={setEditAd}
+                    onView={setViewAd}
+                    showApprove
+                    showStatus
+                    selectable
+                    selectedIds={selectedIds}
+                    onToggleOne={toggleSelectOne}
+                    onToggleAll={toggleSelectAll}
+                  />}
             </div>
           </>
         )}
@@ -440,11 +496,25 @@ function Modal({ onClose, title, children }) {
   );
 }
 
-function AdsTable({ rows, onApprove, onDelete, onEdit, onView, showApprove, showStatus }) {
+function AdsTable({ rows, onApprove, onDelete, onEdit, onView, showApprove, showStatus, selectable, selectedIds, onToggleOne, onToggleAll }) {
+  const ids = rows.map(r => r.id);
+  const allSelected = selectable && ids.length > 0 && ids.every(id => selectedIds.has(id));
+
   return (
     <table style={table}>
       <thead>
         <tr>
+          {selectable && (
+            <th style={{ ...th, width: '36px' }}>
+              <input
+                type="checkbox"
+                checked={allSelected}
+                onChange={() => onToggleAll(ids)}
+                title="Select all"
+                style={checkboxStyle}
+              />
+            </th>
+          )}
           {['Image','Title','Seller','Category','Price', ...(showStatus?['Status']:[]),'Date','Actions'].map(h => (
             <th key={h} style={th}>{h}</th>
           ))}
@@ -452,7 +522,17 @@ function AdsTable({ rows, onApprove, onDelete, onEdit, onView, showApprove, show
       </thead>
       <tbody>
         {rows.map((item, i) => (
-          <tr key={item.id} style={i%2===0?trEven:trOdd}>
+          <tr key={item.id} style={{ ...(i%2===0?trEven:trOdd), ...(selectable && selectedIds.has(item.id) ? trSelected : {}) }}>
+            {selectable && (
+              <td style={td}>
+                <input
+                  type="checkbox"
+                  checked={selectedIds.has(item.id)}
+                  onChange={() => onToggleOne(item.id)}
+                  style={checkboxStyle}
+                />
+              </td>
+            )}
             <td style={td}>
               <img src={`${getImg(item.image_url)}`} style={adThumb} alt=""
                 onClick={() => onView(item)} title="View details"
@@ -532,7 +612,12 @@ const table   = { width:'100%', borderCollapse:'collapse' };
 const th      = { padding:'12px 14px', textAlign:'left', fontSize:'12px', fontWeight:'700', color:'#888', textTransform:'uppercase', letterSpacing:'0.5px', backgroundColor:'#f8f9fa', borderBottom:'1px solid #eee' };
 const trEven  = {};
 const trOdd   = { backgroundColor:'#fafafa' };
+const trSelected = { backgroundColor:'#e8f0fe' };
 const td      = { padding:'11px 14px', fontSize:'14px', color:'#333', verticalAlign:'middle', borderBottom:'1px solid #f5f5f5' };
+const checkboxStyle = { width:'16px', height:'16px', cursor:'pointer', accentColor:'#002f34' };
+
+const bulkBar     = { display:'flex', alignItems:'center', gap:'12px', padding:'10px 16px', backgroundColor:'#002f34', borderRadius:'8px', marginBottom:'14px' };
+const bulkBarText = { color:'#ffce32', fontWeight:'700', fontSize:'13px', marginRight:'auto' };
 
 const adThumb     = { width:'50px', height:'50px', objectFit:'cover', borderRadius:'6px', display:'block', cursor:'pointer' };
 const adTitleStyle= { fontWeight:'600', color:'#002f34', cursor:'pointer', textDecoration:'underline dotted' };
