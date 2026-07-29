@@ -48,6 +48,7 @@ const IMG_HEIGHT = { small: '110%', medium: '100%', large: '90%' };
 function ProductFeed({ onProductClick, searchQuery, wishlist = {}, onToggleWishlist }) {
   const { t, tCat } = useLang();
   const [products,  setProducts]  = useState([]);
+  const [loadState, setLoadState] = useState('loading'); // 'loading' | 'ready' | 'error'
   const [filter,    setFilter]    = useState(() => sessionStorage.getItem('om_filter') || 'All');
   const [viewMode,  setViewMode]  = useState(() => sessionStorage.getItem('om_viewMode') || 'medium');
   const [showAllCategories, setShowAllCategories] = useState(false);
@@ -57,10 +58,29 @@ function ProductFeed({ onProductClick, searchQuery, wishlist = {}, onToggleWishl
   const applyFilter = (f) => { setFilter(f); sessionStorage.setItem('om_filter', f); };
   const applyViewMode = (m) => { setViewMode(m); sessionStorage.setItem('om_viewMode', m); };
 
-  useEffect(() => {
+  const loadStateRef = useRef('loading');
+  useEffect(() => { loadStateRef.current = loadState; }, [loadState]);
+
+  const fetchProducts = () => {
+    setLoadState('loading');
     axios.get('/api/products/approved')
-      .then(res => setProducts(res.data))
-      .catch(err => console.error('Error fetching products:', err));
+      .then(res => { setProducts(res.data); setLoadState('ready'); })
+      .catch(err => { console.error('Error fetching products:', err); setLoadState('error'); });
+  };
+
+  useEffect(() => {
+    fetchProducts();
+    // Cold-start / transient-network retry: a failed first load shouldn't
+    // permanently look like "no listings" — try a couple more times.
+    let attempt = 0;
+    const retry = setInterval(() => {
+      if (loadStateRef.current === 'ready') { clearInterval(retry); return; }
+      if (loadStateRef.current !== 'error') return; // still loading, give it more time
+      attempt += 1;
+      if (attempt > 3) { clearInterval(retry); return; }
+      fetchProducts();
+    }, 4000);
+    return () => clearInterval(retry);
   }, []);
 
   /* Close All-Categories panel on outside click */
@@ -236,7 +256,20 @@ function ProductFeed({ onProductClick, searchQuery, wishlist = {}, onToggleWishl
         </div>
 
         {/* ── PRODUCTS ── */}
-        {filtered.length === 0 ? (
+        {loadState === 'loading' && products.length === 0 ? (
+          <div className="empty-anim" style={emptyState}>
+            <div style={{ fontSize: '56px', marginBottom: '16px' }}>⏳</div>
+            <p style={{ color: '#888', fontSize: '16px' }}>Loading listings…</p>
+          </div>
+        ) : loadState === 'error' && products.length === 0 ? (
+          <div className="empty-anim" style={emptyState}>
+            <div style={{ fontSize: '56px', marginBottom: '16px' }}>⚠️</div>
+            <p style={{ color: '#888', fontSize: '16px', marginBottom: '16px' }}>
+              Couldn't load listings. Please check your connection.
+            </p>
+            <button style={retryBtn} onClick={fetchProducts}>Retry</button>
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="empty-anim" style={emptyState}>
             <div style={{ fontSize: '56px', marginBottom: '16px' }}>🔍</div>
             <p style={{ color: '#888', fontSize: '16px' }}>{t('no_listings')}</p>
@@ -607,6 +640,7 @@ const listMeta    = { display: 'flex', gap: '16px', fontSize: '12px', color: '#9
 const catTag      = { backgroundColor: '#e8f0fe', color: '#3a7bd5', borderRadius: '10px', padding: '1px 8px', fontWeight: '600' };
 
 const emptyState  = { textAlign: 'center', padding: '80px 20px' };
+const retryBtn    = { padding: '10px 24px', backgroundColor: '#002f34', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '14px' };
 
 /* More + / Less – toggle button */
 const moreToggleBtn = {
@@ -624,7 +658,7 @@ const moreToggleBtnActive = {
 /* Expanded MORE filter buttons */
 const filterMoreBtn = {
   display: 'inline-flex', alignItems: 'center',
-  background: 'none', border: 'none', cursor: 'pointer',
+  background: 'none', cursor: 'pointer',
   padding: '6px 12px', fontSize: '12px', fontWeight: '600',
   color: '#444', whiteSpace: 'nowrap', borderRadius: '6px',
   backgroundColor: '#fafafa', border: '1px solid #efefef',
