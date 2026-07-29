@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function ProductPage({ product, onBack, setView }) {
+function ProductPage({ product, onBack, setView, user, onRequireAuth }) {
   const images = JSON.parse(product.image_url);
   const [mainImg,  setMainImg]  = useState(images[0]);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -112,7 +112,7 @@ function ProductPage({ product, onBack, setView }) {
             <button
               className="chat-btn-premium"
               style={chatBtn}
-              onClick={() => setView('chat')}
+              onClick={() => user ? setView('chat') : onRequireAuth()}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>

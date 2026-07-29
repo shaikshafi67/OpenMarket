@@ -554,20 +554,35 @@ app.get('/api/messages/:productId/:user1/:user2', (req, res) => {
 
 app.get('/api/chats/summary/:userId', (req, res) => {
     const userId = req.params.userId;
+    // Each conversation is uniquely identified by (product, other participant) —
+    // last_msg/last_time/last_sender/unread must all be scoped to that specific
+    // pair, otherwise two different buyers chatting about the same product
+    // end up showing each other's messages and unread counts.
     const sql = `
-        SELECT DISTINCT p.id, p.title, p.image_url, p.seller_id, p.price, p.location, p.category,
-        CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END AS buyer_id,
+        SELECT p.id, p.title, p.image_url, p.seller_id, p.price, p.location, p.category,
+        t.other_id AS buyer_id,
         u.name AS other_user_name,
-        (SELECT message_text FROM messages WHERE product_id = p.id ORDER BY timestamp DESC LIMIT 1) as last_msg,
-        (SELECT timestamp FROM messages WHERE product_id = p.id ORDER BY timestamp DESC LIMIT 1) as last_time,
-        (SELECT sender_id FROM messages WHERE product_id = p.id ORDER BY timestamp DESC LIMIT 1) as last_sender_id,
-        (SELECT COUNT(*) FROM messages WHERE product_id = p.id AND receiver_id = ? AND is_read = 0) as msg_count
-        FROM products p
-        JOIN messages m ON p.id = m.product_id
-        JOIN users u ON u.id = CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END
-        WHERE m.sender_id = ? OR m.receiver_id = ?
+        (SELECT message_text FROM messages
+            WHERE product_id = p.id AND ((sender_id = ? AND receiver_id = t.other_id) OR (sender_id = t.other_id AND receiver_id = ?))
+            ORDER BY timestamp DESC LIMIT 1) as last_msg,
+        (SELECT timestamp FROM messages
+            WHERE product_id = p.id AND ((sender_id = ? AND receiver_id = t.other_id) OR (sender_id = t.other_id AND receiver_id = ?))
+            ORDER BY timestamp DESC LIMIT 1) as last_time,
+        (SELECT sender_id FROM messages
+            WHERE product_id = p.id AND ((sender_id = ? AND receiver_id = t.other_id) OR (sender_id = t.other_id AND receiver_id = ?))
+            ORDER BY timestamp DESC LIMIT 1) as last_sender_id,
+        (SELECT COUNT(*) FROM messages
+            WHERE product_id = p.id AND sender_id = t.other_id AND receiver_id = ? AND is_read = 0) as msg_count
+        FROM (
+            SELECT DISTINCT product_id, CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END AS other_id
+            FROM messages
+            WHERE sender_id = ? OR receiver_id = ?
+        ) t
+        JOIN products p ON p.id = t.product_id
+        JOIN users u ON u.id = t.other_id
+        ORDER BY last_time DESC
     `;
-    db.query(sql, [userId, userId, userId, userId, userId], (err, result) => {
+    db.query(sql, Array(10).fill(userId), (err, result) => {
         if (err) return res.status(500).json(err);
         res.json(result);
     });

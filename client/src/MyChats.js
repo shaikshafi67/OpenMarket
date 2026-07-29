@@ -274,7 +274,7 @@ function ChatIllustration() {
 }
 
 /* ── STYLES ── */
-const wrapper     = { display:'flex', height:'calc(100vh - 116px)', backgroundColor:'#f2f4f5', border:'1px solid #e0e0e0', borderRadius:'10px', overflow:'hidden', marginTop:'10px' };
+const wrapper     = { display:'flex', height:'640px', backgroundColor:'#f2f4f5', border:'1px solid #e0e0e0', borderRadius:'10px', overflow:'hidden', marginTop:'10px' };
 const leftPanel   = { width:'380px', flexShrink:0, borderRight:'1px solid #e8e8e8', display:'flex', flexDirection:'column', backgroundColor:'#fff' };
 
 const inboxHeader = { display:'flex', alignItems:'center', justifyContent:'space-between', padding:'16px 18px 14px', borderBottom:'1px solid #f0f0f0' };

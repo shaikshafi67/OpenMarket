@@ -4,10 +4,22 @@ import CategoryGrid from './CategoryGrid';
 import { useLang } from './LanguageContext';
 import CATEGORY_ICONS from './CategoryIcons';
 
-const QUICK_FILTERS = [
+/* Maps the UI label shown in the filter bar → the actual DB category name */
+const FILTER_LABEL_TO_DB = {
+  'Motorcycles':   'Bikes',
+  'Mobile Phones': 'Mobiles',
+};
+const getDbCategory = (label) => FILTER_LABEL_TO_DB[label] || label;
+
+/* Categories always visible in the filter bar */
+const PRIMARY_FILTERS = [
   'Cars', 'Motorcycles', 'Mobile Phones',
-  'For Sale: Houses & Apartments', 'For Rent: Houses & Apartments',
-  'Furniture', 'Electronics & Appliances', 'Services',
+  'Properties', 'Electronics & Appliances', 'Furniture', 'Services',
+];
+
+/* Extra categories revealed by the "More +" button */
+const MORE_FILTERS = [
+  'Commercial Vehicles & Spares', 'Jobs', 'Fashion', 'Pets', 'Books, Sports & Hobbies',
 ];
 
 const ALL_CATEGORIES = [
@@ -39,6 +51,7 @@ function ProductFeed({ onProductClick, searchQuery, wishlist = {}, onToggleWishl
   const [filter,    setFilter]    = useState(() => sessionStorage.getItem('om_filter') || 'All');
   const [viewMode,  setViewMode]  = useState(() => sessionStorage.getItem('om_viewMode') || 'medium');
   const [showAllCategories, setShowAllCategories] = useState(false);
+  const [showMoreFilters,   setShowMoreFilters]   = useState(false);
   const panelRef = useRef(null);
 
   const applyFilter = (f) => { setFilter(f); sessionStorage.setItem('om_filter', f); };
@@ -71,8 +84,6 @@ function ProductFeed({ onProductClick, searchQuery, wishlist = {}, onToggleWishl
     if (onToggleWishlist) onToggleWishlist(product);
   };
 
-  const today = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-
   let filtered = products;
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
@@ -82,7 +93,10 @@ function ProductFeed({ onProductClick, searchQuery, wishlist = {}, onToggleWishl
       (p.location && p.location.toLowerCase().includes(q))
     );
   }
-  if (filter !== 'All') filtered = filtered.filter(p => p.category === filter);
+  if (filter !== 'All') {
+    const dbCat = getDbCategory(filter);
+    filtered = filtered.filter(p => p.category === dbCat);
+  }
 
   return (
     <div style={container}>
@@ -101,17 +115,42 @@ function ProductFeed({ onProductClick, searchQuery, wishlist = {}, onToggleWishl
               {t('all_categories')}
             </button>
 
-            {QUICK_FILTERS.map(cat => (
+            {PRIMARY_FILTERS.map(cat => (
               <button
                 key={cat}
                 className={`filter-btn-anim${filter === cat ? ' active-filter' : ''}`}
                 style={filter === cat ? activeFilterBtn : filterBtn}
-                onClick={() => { applyFilter(cat); setShowAllCategories(false); }}
+                onClick={() => { applyFilter(cat); setShowAllCategories(false); setShowMoreFilters(false); }}
               >
                 {cat}
               </button>
             ))}
-            <span style={dateChip}>{today}</span>
+
+            {/* ── MORE + expanded filters ── */}
+            {showMoreFilters && (
+              <>
+                <div style={moreDivider} />
+                {MORE_FILTERS.map(cat => (
+                  <button
+                    key={cat}
+                    className={`filter-btn-anim${filter === cat ? ' active-filter' : ''}`}
+                    style={filter === cat ? activeFilterMoreBtn : filterMoreBtn}
+                    onClick={() => { applyFilter(cat); setShowAllCategories(false); setShowMoreFilters(false); }}
+                  >
+                    {(() => { const IC = CATEGORY_ICONS[getDbCategory(cat)]; return IC ? <><IC size={13} />&nbsp;</> : null; })()}
+                    {cat}
+                  </button>
+                ))}
+              </>
+            )}
+
+            {/* ── More + / Less – toggle ── */}
+            <button
+              style={showMoreFilters ? moreToggleBtnActive : moreToggleBtn}
+              onClick={() => { setShowMoreFilters(prev => !prev); setShowAllCategories(false); }}
+            >
+              {showMoreFilters ? 'Less −' : 'More +'}
+            </button>
           </div>
         </div>
 
@@ -140,7 +179,7 @@ function ProductFeed({ onProductClick, searchQuery, wishlist = {}, onToggleWishl
         <div style={sectionBar}>
           <h3 style={sectionTitle}>
             <span className="section-heading">
-              {searchQuery ? `${t('results_for')} "${searchQuery}"` : filter === 'All' ? t('fresh_recommendations') : `${t('results_in')} ${tCat(filter)}`}
+              {searchQuery ? `${t('results_for')} "${searchQuery}"` : filter === 'All' ? t('fresh_recommendations') : `${t('results_in')} ${tCat(getDbCategory(filter))}`}
             </span>
             <span style={countLabel}>{filtered.length} {t('ads')}</span>
           </h3>
@@ -443,10 +482,9 @@ const filterBarWrap = {
   zIndex: 100,
 };
 const filterBar   = { backgroundColor: '#fff', borderBottom: '1px solid #eef0f2', padding: '0 20px' };
-const filterInner = { maxWidth: '1260px', margin: 'auto', display: 'flex', gap: '4px', alignItems: 'center', overflowX: 'auto', padding: '6px 0', scrollbarWidth: 'none' };
-const filterBtn   = { background: 'none', border: 'none', cursor: 'pointer', padding: '8px 14px', fontSize: '13px', fontWeight: '600', color: '#444', whiteSpace: 'nowrap', borderRadius: '6px' };
+const filterInner = { maxWidth: '1260px', margin: 'auto', display: 'flex', gap: '2px', alignItems: 'center', overflowX: 'auto', padding: '5px 0', scrollbarWidth: 'none', msOverflowStyle: 'none' };
+const filterBtn   = { background: 'none', border: 'none', cursor: 'pointer', padding: '7px 13px', fontSize: '13px', fontWeight: '600', color: '#444', whiteSpace: 'nowrap', borderRadius: '6px', flexShrink: 0 };
 const activeFilterBtn = { ...filterBtn, backgroundColor: '#002f34', color: '#fff' };
-const dateChip    = { marginLeft: 'auto', fontSize: '13px', color: '#888', whiteSpace: 'nowrap', paddingLeft: '16px' };
 
 /* All Categories Panel */
 const panelWrap  = {
@@ -569,5 +607,38 @@ const listMeta    = { display: 'flex', gap: '16px', fontSize: '12px', color: '#9
 const catTag      = { backgroundColor: '#e8f0fe', color: '#3a7bd5', borderRadius: '10px', padding: '1px 8px', fontWeight: '600' };
 
 const emptyState  = { textAlign: 'center', padding: '80px 20px' };
+
+/* More + / Less – toggle button */
+const moreToggleBtn = {
+  background: 'none', border: '1.5px dashed #bbb', cursor: 'pointer',
+  padding: '6px 14px', fontSize: '12px', fontWeight: '700',
+  color: '#555', whiteSpace: 'nowrap', borderRadius: '20px',
+  transition: 'all 0.2s ease', flexShrink: 0,
+};
+const moreToggleBtnActive = {
+  ...moreToggleBtn,
+  borderStyle: 'solid', borderColor: '#002f34',
+  backgroundColor: '#f0f5f5', color: '#002f34',
+};
+
+/* Expanded MORE filter buttons */
+const filterMoreBtn = {
+  display: 'inline-flex', alignItems: 'center',
+  background: 'none', border: 'none', cursor: 'pointer',
+  padding: '6px 12px', fontSize: '12px', fontWeight: '600',
+  color: '#444', whiteSpace: 'nowrap', borderRadius: '6px',
+  backgroundColor: '#fafafa', border: '1px solid #efefef',
+  transition: 'all 0.2s ease',
+};
+const activeFilterMoreBtn = {
+  ...filterMoreBtn,
+  backgroundColor: '#002f34', color: '#fff', border: '1px solid #002f34',
+};
+
+/* Thin vertical divider between primary + more filters */
+const moreDivider = {
+  width: '1px', height: '24px', backgroundColor: '#ddd',
+  flexShrink: 0, alignSelf: 'center', margin: '0 4px',
+};
 
 export default ProductFeed;

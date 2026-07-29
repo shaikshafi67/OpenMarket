@@ -338,7 +338,7 @@ function AppInner() {
           />
         )}
         {view === 'chat' && user && (
-          <div style={{ height: 'calc(100vh - 110px)', display:'flex', flexDirection:'column' }}>
+          <div style={{ height: '640px', display:'flex', flexDirection:'column' }}>
             <ChatWindow product={activeProduct} currentUser={user} onBack={() => setView('my-chats')} showProductPanel={false} />
           </div>
         )}
@@ -353,15 +353,13 @@ function AppInner() {
         {view === 'footer-page' && <FooterPage link={activeFooterLink} onBack={() => { setView('market'); setActiveFooterLink(null); }} />}
       </main>
 
-      {/* ── FOOTER — hidden on full-screen chat views ── */}
-      {!['chat', 'my-chats'].includes(view) && (
-        <Footer
-          onLinkClick={(link) => {
-            setActiveFooterLink(link);
-            setView('footer-page');
-          }}
-        />
-      )}
+      {/* ── FOOTER — shown on every page ── */}
+      <Footer
+        onLinkClick={(link) => {
+          setActiveFooterLink(link);
+          setView('footer-page');
+        }}
+      />
 
       {/* ── AUTH MODAL ── */}
       {showAuthModal && (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import FooterAdmin from './FooterAdmin';
+import Footer from './Footer';
 
 const API = '/api/admin';
 
@@ -142,6 +143,7 @@ export default function AdminDashboard({ user, onLogout }) {
 
   return (
     <div style={shell}>
+    <div style={adminBody}>
 
       {/* ── SIDEBAR ─────────────────────────────────────────────── */}
       <aside style={sidebar}>
@@ -297,6 +299,10 @@ export default function AdminDashboard({ user, onLogout }) {
           </>
         )}
       </main>
+    </div>
+
+      {/* ── FOOTER ───────────────────────────────────────────────── */}
+      <Footer onLinkClick={() => {}} />
 
       {/* ── VIEW AD MODAL ─────────────────────────────────────────── */}
       {viewAd && (
@@ -482,7 +488,8 @@ function AdsTable({ rows, onApprove, onDelete, onEdit, onView, showApprove, show
 }
 
 // ── STYLES ────────────────────────────────────────────────────────────
-const shell   = { display:'flex', minHeight:'100vh', fontFamily:"'Segoe UI',Arial,sans-serif", backgroundColor:'#f0f2f5' };
+const shell   = { display:'flex', flexDirection:'column', minHeight:'100vh', fontFamily:"'Segoe UI',Arial,sans-serif", backgroundColor:'#f0f2f5' };
+const adminBody = { display:'flex', flex:1, minHeight:0 };
 const sidebar = { width:'240px', flexShrink:0, backgroundColor:'#002f34', display:'flex', flexDirection:'column', position:'sticky', top:0, height:'100vh' };
 const sideTop = { padding:'24px 20px 16px' };
 const sideLogo= { display:'flex', alignItems:'center', gap:'12px' };
