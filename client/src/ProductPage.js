@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 function ProductPage({ product, onBack, setView, user, onRequireAuth }) {
+  const isOwnProduct = !!user && user.id === product.seller_id;
   const images = JSON.parse(product.image_url);
   const [mainImg,  setMainImg]  = useState(images[0]);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -109,16 +110,25 @@ function ProductPage({ product, onBack, setView, user, onRequireAuth }) {
                 )}
               </div>
             </div>
-            <button
-              className="chat-btn-premium"
-              style={chatBtn}
-              onClick={() => user ? setView('chat') : onRequireAuth()}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-              </svg>
-              Chat with Seller
-            </button>
+            {isOwnProduct ? (
+              <div style={ownProductNote}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+                </svg>
+                This is your own listing
+              </div>
+            ) : (
+              <button
+                className="chat-btn-premium"
+                style={chatBtn}
+                onClick={() => user ? setView('chat') : onRequireAuth()}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                Chat with Seller
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -237,6 +247,21 @@ const chatBtn = {
   alignItems: 'center',
   justifyContent: 'center',
   gap: '10px',
+};
+
+const ownProductNote = {
+  width: '100%',
+  padding: '14px',
+  backgroundColor: '#f0f2f5',
+  color: '#666',
+  borderRadius: '10px',
+  fontWeight: '700',
+  fontSize: '14px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '8px',
+  boxSizing: 'border-box',
 };
 
 export default ProductPage;
