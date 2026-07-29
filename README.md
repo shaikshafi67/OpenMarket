@@ -93,7 +93,7 @@ You should see:
 ✅ Server & Database Connected Successfully
 ```
 
-**Environment variables (optional)** — The server uses these defaults but you can override them by creating a `server/.env` file:
+**Environment variables** — create a `server/.env` file (never commit it — it's already git-ignored):
 
 ```env
 DB_HOST=localhost
@@ -101,9 +101,14 @@ DB_USER=root
 DB_PASSWORD=
 DB_NAME=open_market
 PORT=5000
+
+GMAIL_USER=your-gmail-address@gmail.com
+GMAIL_APP_PASSWORD=your-16-char-app-password
 ```
 
-> If your MySQL root account has a password, set `DB_PASSWORD` accordingly.
+> `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `PORT` are optional — the server falls back to the defaults above if unset. If your MySQL root account has a password, set `DB_PASSWORD` accordingly.
+>
+> `GMAIL_USER` and `GMAIL_APP_PASSWORD` are **required** for OTP emails (registration/password reset) to send. Generate an App Password at [Google Account → Security → App Passwords](https://myaccount.google.com/apppasswords) (requires 2-Step Verification enabled) — do not use your regular Gmail password.
 
 **Hot reload (development):** Use `npx nodemon index.js` instead of `node index.js` to auto-restart on file changes.
 
@@ -167,6 +172,8 @@ docker run -p 5000:5000 \
   -e DB_USER=root \
   -e DB_PASSWORD=yourpassword \
   -e DB_NAME=open_market \
+  -e GMAIL_USER=your-gmail-address@gmail.com \
+  -e GMAIL_APP_PASSWORD=your-16-char-app-password \
   openmarket
 ```
 
